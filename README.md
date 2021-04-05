@@ -1,4 +1,4 @@
-# NewRelic
+# New Relic
 
 Notes for New Relic work.
 
