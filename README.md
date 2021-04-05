@@ -4,14 +4,6 @@ Notes for New Relic work.
 
 ## How to Install New Relic Ruby Agent
 
-#### Links
-
-[https://docs.newrelic.com/docs/agents/ruby-agent/configuration/ruby-agent-configuration/](https://docs.newrelic.com/docs/agents/ruby-agent/configuration/ruby-agent-configuration/)
-
-[https://docs.newrelic.com/docs/agents/ruby-agent/installation/install-new-relic-ruby-agent/](https://docs.newrelic.com/docs/agents/ruby-agent/installation/install-new-relic-ruby-agent/)
-
-[https://discuss.newrelic.com/t/unable-to-go-to-settings-or-notice-a-place-to-download-the-newrelic-yml-file-in-nr-one/144166/2](https://discuss.newrelic.com/t/unable-to-go-to-settings-or-notice-a-place-to-download-the-newrelic-yml-file-in-nr-one/144166/2)
-
 ### Steps
 
 1. Have a Ruby application ready for which you want the APM. For me I found from a site the repo for the Rails Tutorial, in this case from JetBrains, which is just a fork of the project:
@@ -34,3 +26,12 @@ Notes for New Relic work.
 
 
 If you wanted to add another APM for another application you would hit the `+ Add more data` button in the upper right.
+
+#### Useful Links
+
+[https://docs.newrelic.com/docs/agents/ruby-agent/configuration/ruby-agent-configuration/](https://docs.newrelic.com/docs/agents/ruby-agent/configuration/ruby-agent-configuration/)
+
+[https://docs.newrelic.com/docs/agents/ruby-agent/installation/install-new-relic-ruby-agent/](https://docs.newrelic.com/docs/agents/ruby-agent/installation/install-new-relic-ruby-agent/)
+
+[https://discuss.newrelic.com/t/unable-to-go-to-settings-or-notice-a-place-to-download-the-newrelic-yml-file-in-nr-one/144166/2](https://discuss.newrelic.com/t/unable-to-go-to-settings-or-notice-a-place-to-download-the-newrelic-yml-file-in-nr-one/144166/2)
+
