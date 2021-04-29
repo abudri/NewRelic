@@ -29,3 +29,8 @@ We're now controlling the volume of results we get. But what if we don't want *
 
 ![image](https://user-images.githubusercontent.com/17362519/115918584-af8ec480-a445-11eb-9252-54f558bd03ed.png)
 
+```SQL
+SELECT name, duration FROM Transaction
+```
+
+
