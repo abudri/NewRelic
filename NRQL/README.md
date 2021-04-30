@@ -68,6 +68,10 @@ _____
 
 # Query Samples
 
+These are derived during/from the NRQL Lessons app within my New Relic One account, which is a series of lessons on NRQL.
+
+### Lesson 1
+
 Getting the top 5 longest Transactions, along with the HTTP Response Code:
 
 `SELECT max(duration) FROM Transaction FACET name, httpResponseCode LIMIT 5`
