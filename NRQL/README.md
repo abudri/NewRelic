@@ -70,7 +70,7 @@ _____
 
 These are derived during/from the NRQL Lessons app within my New Relic One account, which is a series of lessons on NRQL.
 
-### Lesson 1
+### Level 1: Learning the Ropes
 
 Getting the top 5 longest Transactions, along with the HTTP Response Code:
 
@@ -102,11 +102,88 @@ This query compares the quantity of Web transactions, broken down by individual 
 
 <img src="https://user-images.githubusercontent.com/17362519/116710548-e01fb280-a99f-11eb-9404-8841d4fed794.png" width="850;" />
 
+### Level 2: Controlling Your Data
 
+There may also be scenarios in which you need percentages instead of counts, sums, or averages. Using the `percentage()` function allows you to calculate the percentage of a value in the data set that matches a specified condition. This function takes two arguments: the first is an aggregator function for your desired attribute, such as `count()`. The second is a `WHERE` condition to specify the subset of data you'd like to query.
 
+In this sample query, we are finding the percentage of transactions over the last day that had a duration (or response time) greater than 100 milliseconds.
 
+`SELECT percentage(count(*), WHERE duration > 0.1) FROM Transaction SINCE 1 day ago` - From [Level 2, Section 2]
 
+<img src="https://user-images.githubusercontent.com/17362519/116712228-a2bc2480-a9a1-11eb-8a59-187e626c2cdf.png" width="850;" />
 
+It's very common to view application performance and/or customer experience data using percentiles rather than averages. With the `percentile()` function we can understand the experience of the *nth* percentile.
 
+For example, let's say we want to know what the worst experience (highest duration) of 98% of our customers is today. We can ask NRDB for `percentile(duration, 98)` from the last 24 hours:
 
+`SELECT percentile(duration, 98) FROM Transaction SINCE 1 day ago` - From [Level 2, Section 2]
+
+<img src="https://user-images.githubusercontent.com/17362519/116712820-3b52a480-a9a2-11eb-8772-5644f2d495f9.png" width="850;" />
+
+### Level 3: Advancing Your Dashboard
+
+`filter()` is a powerful tool that allows you to aggregate multiple data points in a single query, offering more control over which events are included in function results. In this example, we use `filter()` to return the separate values for total transactions, total web transactions, and total non-web transactions:
+
+`SELECT count(*) as 'All Transactions', filter(count(*), where transactionType ='Web') as 'Web Transactions', filter(count(*), where transactionType !='Web') as 'Non-Web Transactions' from Transaction since 24 hours ago` 
+
+<img src="https://user-images.githubusercontent.com/17362519/116723946-0b110300-a9ae-11eb-9db5-9f493fd2152b.png" width="850;" />
+
+Since it returns a number, you can also perform math on its results. For example, we can divide total web transactions by all transactions to determine what percent of transaction were web transactions:
+
+`SELECT (filter(count(*), where transactionType ='Web') / count(*)) * 100 as 'Percent web' from Transaction since 24 hours ago`
+
+<img src="https://user-images.githubusercontent.com/17362519/116724071-309e0c80-a9ae-11eb-98fa-8e5600b9b87a.png" width="850;" />
+
+As you learned in previous lessons, `FACET` is a great way to both segment your data, and understand it from differently grouped perspectives (such as seeing average response time based on different response codes). When you use `FACET`, NRDB organizes data into groups based on the values of provided attributes. But what if you wanted to group multiple values together, such as HTTP response codes 200, 201, etc.?
+
+`FACET CASES()` solves for this issue by allowing you to choose how facet buckets are broken out. The operator takes any number of parameters in the format "`WHERE attr OP value`". In the example below we've categorized all transactions with response code starting with "2" into a "2xx Responses" bucket. We could also do this for 3xx, 4xx, and 5xx response codes to group our data in ways that increase readability and help us understand what's happening in our application(s
+
+`SELECT count(*) from Transaction FACET CASES(where response.status LIKE '2%' OR httpResponseCode LIKE '2%', where response.status LIKE '3%' OR httpResponseCode LIKE '3%', where response.status LIKE '4%' OR httpResponseCode LIKE '4%', where response.status LIKE '5%' OR httpResponseCode LIKE '5%')` - [Level 3, Section 4]
+
+<img src="https://user-images.githubusercontent.com/17362519/116725877-8bd0fe80-a9b0-11eb-9855-b75e5c158f9c.png" width="850;" />
+
+As you can see, these groupings are useful but difficult to read. Let's clean them up using something we learned in level 2 of this course:
+
+`SELECT count(*) from Transaction FACET CASES(where response.status LIKE '2%' OR httpResponseCode LIKE '2%' as '2xx Responses', where response.status LIKE '3%' OR httpResponseCode LIKE '3%' as '3xx Responses', where response.status LIKE '4%' OR httpResponseCode LIKE '4%' as '4xx Responses', where response.status LIKE '5%' OR httpResponseCode LIKE '5%' as '5xx Responses')`
+
+<img src="https://user-images.githubusercontent.com/17362519/116725984-ac995400-a9b0-11eb-8890-e31c653e2dd4.png" width="850;" />
+
+#### Section 5
+
+So far, we've made queries that pull data from a single source. But what if you want to plot 2 data points that are stored as two different event types? Querying NRDB data is not limited to a single event type! To query from multiple event types you can include each event type seperated by a comma.
+
+`SELECT count(*) as 'Combined Events' FROM Transaction, PageView SINCE 1 day ago` 
+
+<img src="https://user-images.githubusercontent.com/17362519/116727365-74931080-a9b2-11eb-99fa-2f629e0034a4.png" width="850;" />
+
+To make this even more useful, the `eventType()` function tells us which event type a record is from. We can use this to control our data output. In this example, we see the total number of *Transaction* and *PageView* events combined, as well as the totals for only *Transaction* and *PageView*.
+
+`SELECT count(*) as 'Combined Events', filter(count(*), WHERE eventType() = 'PageView') as 'Page Views', filter(count(*), WHERE eventType()='Transaction') as 'Transactions' FROM Transaction, PageView SINCE 1 day ago`
+
+<img src="https://user-images.githubusercontent.com/17362519/116727562-b9b74280-a9b2-11eb-9c10-d9be81c73633.png" width="850;" />
+
+Let's look at this in more detail: `count(*)` is the total number of both Transaction and PageView events. However, we can use the aggregator function `filter()` we recently learned about to do something unique. We tell it `WHERE eventType()='PageView'`. This invokes the filter function to observe the event type as part of the total result set, then filter to display only those specific events. We can even add `TIMESERIES` to visualize 2 directly comparable data points on a line graph.
+
+`SELECT count(*) as 'Combined Events', filter(count(*), WHERE eventType() = 'PageView') as 'Page Views', filter(count(*), WHERE eventType()='Transaction') as 'Transactions' FROM Transaction, PageView SINCE 1 day ago TIMESERIES max`
+
+<img src="https://user-images.githubusercontent.com/17362519/116727785-03079200-a9b3-11eb-84cd-cd8e47ceef24.png" width="850;" />
+
+### Level 4: NRQL Power User
+
+#### Section 6
+
+**Nested aggregation**
+NRQL does not support the type of joins used in traditional SQL databases. However, you can write nested aggregation queries that resemble sub queries. This allows you to answer questions such as:
+
+How many requests per minute did my application handle, and what was the maximum rate of requests per minute in the last hour?
+What is the average CPU usage of all my servers, and which specific servers are over 90%?
+What percentage of all user sessions bounced immediately (i.e. only one PageView in the session)?
+Let's explore each of these use cases in more detail.
+
+Example 1 - Max RPM for Last Hour
+First we count the number of transactions per minute over the last hour. There is nothing new here. This returns 60 data points on a graph:
+
+`SELECT count(*) AS rpm FROM Transaction TIMESERIES 1 MINUTE`
+
+<img src="https://user-images.githubusercontent.com/17362519/116728689-37c81900-a9b4-11eb-94b2-0a1bb831b366.png" width="850;" />
 
