@@ -1,5 +1,36 @@
 # NRQL Query Language - NRQL
 
+## **What data can you query with NRQL?**
+
+NRQL allows you to query these New Relic data types:
+
+- [Event data](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#event-data) from all New Relic products, including:
+    - [APM events](https://docs.newrelic.com/docs/insights/insights-data-sources/default-data/apm-default-events-insights/), like `Transaction`
+    - [Browser monitoring events](https://docs.newrelic.com/docs/insights/insights-data-sources/default-data/browser-default-events-insights/), like `PageView`
+    - [Mobile monitoring events](https://docs.newrelic.com/docs/insights/insights-data-sources/default-data/mobile-default-events-insights/), like `Mobile`
+    - [Infrastructure events](https://docs.newrelic.com/docs/infrastructure/manage-your-data/data-instrumentation/default-infrastructure-events/), like `ProcessSample`
+    - [Synthetics events](https://docs.newrelic.com/docs/insights/insights-data-sources/default-data/synthetics-default-events-insights/), like `SyntheticCheck`
+    - Custom events, like those reported by the [Event API](https://docs.newrelic.com/docs/insights/insights-data-sources/custom-data/introduction-event-api/)
+- [Metric timeslice data](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#timeslice-data) (metrics reported by New Relic APM, Browser, and Mobile)
+- The `[Metric` data type](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#metric-time-series) (metrics reported by the Metric API and data sources that use that API)
+- The `[Span` data type](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#trace-data) (distributed tracing data)
+- The `[Log` data type](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#log-data) (data from New Relic Logs)
+____
+
+## **Events reported by APM**
+
+[New Relic APM](https://docs.newrelic.com/docs/apm/new-relic-apm/getting-started/) reports [event data](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/new-relic-data-types/#event-data) that appears in some UI displays and is also available for [querying and charting](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/query-new-relic-data/). Select an event name in the following table to see its attributes.
+
+* **[Transaction](https://docs.newrelic.com/attribute-dictionary/?attribute_name=&events_tids%5B%5D=8357&event=Transaction)** - 
+A transaction is a logical unit of work in a software application. The `Transaction` event includes information about the app, database calls, the duration of the transaction, and any errors that may occur.
+
+* **[TransactionError](https://docs.newrelic.com/attribute-dictionary/?attribute_name=&events_tids%5B%5D=8357&event=TransactionError)** - 
+Transaction errors occur when a request throws an exception in the code path that was taken to fill that request. The number of transaction errors does not equal the number of transactions, because you can specify whether you want to [collect, ignore, or mark errors as expected](https://docs.newrelic.com/docs/agents/manage-apm-agents/agent-data/manage-errors-apm-collect-ignore-or-mark-expected/).
+
+* **[Span](https://docs.newrelic.com/attribute-dictionary/?attribute_name=&events_tids%5B%5D=8357&event=Span)** - 
+Span events are created when New Relic agents, or other tracing instrumentation tools, instrument operations that are part of a distributed trace. See the definition of span.
+____
+
 ## [NRQL Lesson App](https://one.newrelic.com/launcher/34b6d49a-d824-4f99-b337-1d9a5467094d.nrql-tutorial-launcher?pane=eyJuZXJkbGV0SWQiOiIzNGI2ZDQ5YS1kODI0LTRmOTktYjMzNy0xZDlhNTQ2NzA5NGQubnJxbC10dXRvcmlhbC1uZXJkbGV0In0=&platform[accountId]=2971796&platform[timeRange][duration]=1800000&platform[$isFallbackTimeRange]=true)
 
 **NRQL** stands for New Relic Query Language. It gives you realtime access to petabytes of Metric, Event, Log, and Trace data in NRDB.
