@@ -64,4 +64,45 @@ We're now controlling the volume of results we get. But what if we don't want *
 SELECT name, duration FROM Transaction
 ```
 
+_____
+
+# Query Samples
+
+Getting the top 5 longest Transactions, along with the HTTP Response Code:
+
+`SELECT max(duration) FROM Transaction FACET name, httpResponseCode LIMIT 5`
+
+<img src="https://user-images.githubusercontent.com/17362519/116704556-8a480c00-a999-11eb-9dec-a8785f8c4384.png" width="850;" />
+
+**`FACET` [Lesson 1, Section 7]**
+
+Often, you'll want to determine the "Top N" values grouped by a specific attribute. In NRQL, you do this using `FACET`. For example, here are the slowest Transaction calls observed on average, grouped by name. We could describe this as "faceted by name". By default, a faceted query will return the _top 10 results_; but you can customize how many results are returned with a `LIMIT`.
+
+`SELECT average(duration) FROM Transaction FACET name, httpResponseCode LIMIT 5`
+
+<img src="https://user-images.githubusercontent.com/17362519/116709736-f8430200-a99e-11eb-91f6-16655d7bfa44.png" width="850;" />
+
+ In this example, we will retrieve the top 5 results displayed on a line chart with `TIMESERIES`: 
+ 
+`SELECT average(duration) FROM Transaction FACET name, httpResponseCode SINCE 3 hours ago LIMIT 5 TIMESERIES`
+
+<img src="https://user-images.githubusercontent.com/17362519/116710113-64be0100-a99f-11eb-8505-df0b148e9cfb.png" width="850;" />
+
+But maybe you don't want a line chart. Perhaps you'd prefer a list of the 20 slowest Transactions. By removing the `TIMESERIES`, we can instead render a bar or pie chart:
+
+<img src="https://user-images.githubusercontent.com/17362519/116710361-ac448d00-a99f-11eb-8048-348b8e003d9b.png" width="850;" />
+
+This query compares the quantity of Web transactions, broken down by individual applications that report to New Relic:
+
+`SELECT count(*) FROM Transaction WHERE transactionType='Web' FACET appName LIMIT 5 SINCE 6 hours ago TIMESERIES`
+
+<img src="https://user-images.githubusercontent.com/17362519/116710548-e01fb280-a99f-11eb-9404-8841d4fed794.png" width="850;" />
+
+
+
+
+
+
+
+
 
